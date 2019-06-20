@@ -3,10 +3,12 @@ package io.github.christophermanahan.captainlunch.web;
 import io.github.christophermanahan.captainlunch.service.UserService;
 import io.github.christophermanahan.captainlunch.service.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,13 @@ public class UserController {
         } else {
             return unauthorizedResponse();
         }
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> userAlreadyExists() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Ahoy captain! You are already a captain.");
     }
 
     private ResponseEntity<String> unauthorizedResponse() {

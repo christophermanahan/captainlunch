@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +30,7 @@ class UserControllerTest {
     private ValidationService validationService;
 
     @Test
+    @SuppressWarnings("unchecked")
     void createsUserIfRequestIsValid() throws Exception {
         String identity = "W100000";
         when(userService.createUser(identity)).thenReturn(new User(identity));
@@ -53,5 +55,19 @@ class UserControllerTest {
                 .param("user_id", identity)
                 .param("user_name", "Test"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void isFoundIfUserAlreadyExist() throws Exception {
+        String identity = "W100000";
+        when(userService.createUser(identity)).thenThrow(DataIntegrityViolationException.class);
+        when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
+
+        mvc.perform(post("/join")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("user_id", identity)
+                .param("user_name", "Test"))
+                .andExpect(status().isOk());
     }
 }
