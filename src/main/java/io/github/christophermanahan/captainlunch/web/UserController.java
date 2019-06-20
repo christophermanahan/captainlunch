@@ -28,7 +28,21 @@ public class UserController {
             HttpEntity<String> request,
             @RequestParam("user_id") String userId,
             @RequestParam("user_name") String userName) {
-        userService.createUser(userId);
+        if (validationService.validateRequest(request)) {
+            userService.createUser(userId);
+            return createdResponse(userName);
+        } else {
+            return unauthorizedResponse();
+        }
+    }
+
+    private ResponseEntity<String> unauthorizedResponse() {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Unauthorized");
+    }
+
+    private ResponseEntity<String> createdResponse(@RequestParam("user_name") String userName) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -40,4 +40,18 @@ class UserControllerTest {
             .param("user_name", "Test"))
             .andExpect(status().isCreated());
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void failsToCreatesUserIfRequestIsInvalid() throws Exception {
+        String identity = "W100000";
+        when(userService.createUser(identity)).thenReturn(new User(identity));
+        when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(false);
+
+        mvc.perform(post("/join")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("user_id", identity)
+                .param("user_name", "Test"))
+                .andExpect(status().isUnauthorized());
+    }
 }
