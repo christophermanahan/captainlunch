@@ -29,6 +29,7 @@ class ValidationServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void isTrueWhenIncomingRequestIsValid() {
         when(applicationConfiguration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
         when(configurationService.getApplicationConfiguration()).thenReturn(applicationConfiguration);
@@ -43,6 +44,7 @@ class ValidationServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void isFalseWhenIncomingRequestIsNotValid() {
         String invalidVerificationSignature = "invalid_verification_signature";
         when(applicationConfiguration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
