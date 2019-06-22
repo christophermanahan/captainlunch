@@ -1,5 +1,6 @@
 package io.github.christophermanahan.captainlunch.service;
 
+import io.github.christophermanahan.captainlunch.configuration.SigningSecretConfiguration;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -13,11 +14,11 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class SlackSigningSecretValidationService implements ValidationService {
 
-    private ConfigurationService configurationService;
+    private SigningSecretConfiguration configuration;
 
     @Autowired
-    SlackSigningSecretValidationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+    SlackSigningSecretValidationService(SigningSecretConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public Boolean validateRequest(HttpEntity<String> request) {
@@ -44,7 +45,7 @@ public class SlackSigningSecretValidationService implements ValidationService {
     }
 
     private SecretKeySpec createSecretKey() {
-        String signingSecret = configurationService.getApplicationConfiguration().getIncomingRequestSigningSecret();
+        String signingSecret = configuration.getIncomingRequestSigningSecret();
         return new SecretKeySpec(signingSecret.getBytes(), "HmacSHA256");
     }
 

@@ -2,7 +2,7 @@ package io.github.christophermanahan.captainlunch.web;
 
 import io.github.christophermanahan.captainlunch.model.User;
 import io.github.christophermanahan.captainlunch.service.CreateUserService;
-import io.github.christophermanahan.captainlunch.service.SlackSigningSecretValidationService;
+import io.github.christophermanahan.captainlunch.service.ValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,19 +29,19 @@ class UserControllerTest {
     private CreateUserService userService;
 
     @MockBean
-    private SlackSigningSecretValidationService slackSigningSecretValidationService;
+    private ValidationService validationService;
 
     @Test
     @SuppressWarnings("unchecked")
     void createsUserIfRequestIsValid() throws Exception {
         String identity = "W100000";
         when(userService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
-        when(slackSigningSecretValidationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
+        when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
 
         mvc.perform(post("/join")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("user_id", identity)
-            .param("user_name", "Test"))
+            .param("display_name", "Test"))
             .andExpect(status().isCreated());
     }
 
@@ -50,12 +50,12 @@ class UserControllerTest {
     void failsToCreatesUserIfRequestIsInvalid() throws Exception {
         String identity = "W100000";
         when(userService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
-        when(slackSigningSecretValidationService.validateRequest(any(HttpEntity.class))).thenReturn(false);
+        when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(false);
 
         mvc.perform(post("/join")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("user_id", identity)
-                .param("user_name", "Test"))
+                .param("display_name", "Test"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -64,12 +64,12 @@ class UserControllerTest {
     void isFoundIfUserAlreadyExist() throws Exception {
         String identity = "W100000";
         when(userService.createUser(identity)).thenThrow(DataIntegrityViolationException.class);
-        when(slackSigningSecretValidationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
+        when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
 
         mvc.perform(post("/join")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("user_id", identity)
-                .param("user_name", "Test"))
+                .param("display_name", "Test"))
                 .andExpect(status().isOk());
     }
 }

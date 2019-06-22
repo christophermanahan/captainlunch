@@ -1,6 +1,6 @@
 package io.github.christophermanahan.captainlunch.service;
 
-import io.github.christophermanahan.captainlunch.configuration.ApplicationConfiguration;
+import io.github.christophermanahan.captainlunch.configuration.SigningSecretConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -12,8 +12,7 @@ import static org.mockito.Mockito.when;
 
 class SlackSigningSecretValidationServiceTest {
 
-    private ApplicationConfiguration applicationConfiguration;
-    private ConfigurationService configurationService;
+    private SigningSecretConfiguration configuration;
     private ValidationService validationService;
 
     private String signingSecret = "8f742231b10e8888abcd99yyyzzz85a5";
@@ -23,16 +22,14 @@ class SlackSigningSecretValidationServiceTest {
 
     @BeforeEach
     void setUp() {
-        applicationConfiguration = mock(ApplicationConfiguration.class);
-        configurationService = mock(ConfigurationService.class);
-        validationService = new SlackSigningSecretValidationService(configurationService);
+        configuration = mock(SigningSecretConfiguration.class);
+        validationService = new SlackSigningSecretValidationService(configuration);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void isTrueWhenIncomingRequestIsValid() {
-        when(applicationConfiguration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
-        when(configurationService.getApplicationConfiguration()).thenReturn(applicationConfiguration);
+        when(configuration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Slack-Signature", verificationSignature);
         headers.add("X-Slack-Request-Timestamp", timestamp);
@@ -47,8 +44,7 @@ class SlackSigningSecretValidationServiceTest {
     @SuppressWarnings("unchecked")
     void isFalseWhenIncomingRequestIsNotValid() {
         String invalidVerificationSignature = "invalid_verification_signature";
-        when(applicationConfiguration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
-        when(configurationService.getApplicationConfiguration()).thenReturn(applicationConfiguration);
+        when(configuration.getIncomingRequestSigningSecret()).thenReturn(signingSecret);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Slack-Signature", invalidVerificationSignature);
         headers.add("X-Slack-Request-Timestamp", timestamp);

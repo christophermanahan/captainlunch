@@ -20,6 +20,8 @@ public class User {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
+    public User() {}
+
     public User(String identity, Date now) {
         this.identity = identity;
         this.startDate = now;
