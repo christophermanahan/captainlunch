@@ -26,7 +26,7 @@ class UserControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private CreateUserService createUserService;
+    private CreateUserService userService;
 
     @MockBean
     private ValidationService validationService;
@@ -35,7 +35,7 @@ class UserControllerTest {
     @SuppressWarnings("unchecked")
     void createsUserIfRequestIsValid() throws Exception {
         String identity = "W100000";
-        when(createUserService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
+        when(userService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
         when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
 
         mvc.perform(post("/join")
@@ -49,7 +49,7 @@ class UserControllerTest {
     @SuppressWarnings("unchecked")
     void failsToCreatesUserIfRequestIsInvalid() throws Exception {
         String identity = "W100000";
-        when(createUserService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
+        when(userService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
         when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(false);
 
         mvc.perform(post("/join")
@@ -63,7 +63,7 @@ class UserControllerTest {
     @SuppressWarnings("unchecked")
     void isFoundIfUserAlreadyExist() throws Exception {
         String identity = "W100000";
-        when(createUserService.createUser(identity)).thenThrow(DataIntegrityViolationException.class);
+        when(userService.createUser(identity)).thenThrow(DataIntegrityViolationException.class);
         when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
 
         mvc.perform(post("/join")

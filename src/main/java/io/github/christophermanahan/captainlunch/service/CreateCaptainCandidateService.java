@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateCaptainService implements CreateUserService {
+public class CreateCaptainCandidateService implements CreateUserService {
 
     private final UserRepository userRepository;
     private Time time;
 
     @Autowired
-    public CreateCaptainService(UserRepository userRepository, Time time) {
+    public CreateCaptainCandidateService(UserRepository userRepository, Time time) {
         this.userRepository = userRepository;
         this.time = time;
     }

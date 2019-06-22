@@ -14,17 +14,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class CreateUserServiceTest {
+class CreateCaptainCandidateServiceTest {
 
     private UserRepository userRepository;
     private Time time;
-    private CreateCaptainService userService;
+    private CreateCaptainCandidateService userService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         time = mock(Time.class);
-        userService = new CreateCaptainService(userRepository, time);
+        userService = new CreateCaptainCandidateService(userRepository, time);
     }
 
     @Test

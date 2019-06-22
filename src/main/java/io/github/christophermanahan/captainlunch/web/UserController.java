@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private CreateUserService createUserService;
+    private CreateUserService userService;
     private ValidationService validationService;
 
     @Autowired
-    public UserController(CreateUserService createUserService, ValidationService validationService) {
-        this.createUserService = createUserService;
+    public UserController(CreateUserService userService, ValidationService validationService) {
+        this.userService = userService;
         this.validationService = validationService;
     }
 
@@ -31,7 +31,7 @@ public class UserController {
             @RequestParam("user_id") String userId,
             @RequestParam("user_name") String userName) {
         if (validationService.validateRequest(request)) {
-            createUserService.createUser(userId);
+            userService.createUser(userId);
             return createdResponse(userName);
         } else {
             return unauthorizedResponse();
