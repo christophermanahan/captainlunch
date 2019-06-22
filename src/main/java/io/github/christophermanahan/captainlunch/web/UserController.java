@@ -1,6 +1,6 @@
 package io.github.christophermanahan.captainlunch.web;
 
-import io.github.christophermanahan.captainlunch.service.UserService;
+import io.github.christophermanahan.captainlunch.service.CreateUserService;
 import io.github.christophermanahan.captainlunch.service.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private UserService userService;
+    private CreateUserService createUserService;
     private ValidationService validationService;
 
     @Autowired
-    public UserController(UserService userService, ValidationService validationService) {
-        this.userService = userService;
+    public UserController(CreateUserService createUserService, ValidationService validationService) {
+        this.createUserService = createUserService;
         this.validationService = validationService;
     }
 
@@ -31,7 +31,7 @@ public class UserController {
             @RequestParam("user_id") String userId,
             @RequestParam("user_name") String userName) {
         if (validationService.validateRequest(request)) {
-            userService.createUser(userId);
+            createUserService.createUser(userId);
             return createdResponse(userName);
         } else {
             return unauthorizedResponse();
