@@ -7,7 +7,6 @@ import io.github.christophermanahan.captainlunch.web.slack.UserProfile;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 
 import java.util.ArrayList;
@@ -16,8 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-class SchedulerTest {
+class NotificationSchedulerTest {
 
     class MockRotationService implements UserRotationService {
 
@@ -36,31 +37,16 @@ class SchedulerTest {
         }
 
         public void rotate() {
-            Collections.rotate(users, 1);
+            Collections.rotate(users, -1);
         }
     }
-
-/*    class MockClient implements Client {
-        
-        public String sent;
-
-        public HttpEntity notifyUsers(String body) {
-            sent = body;
-            return new HttpEntity<>(body);
-        }
-
-        public HttpEntity<User> getUserProfile(String userId) {
-            UserProf
-            return
-        }
-    }*/
 
     private User user1;
     private User user2;
     private User user3;
     private UserRotationService rotationService;
     private Client client;
-    private Scheduler scheduler;
+    private NotificationScheduler notificationScheduler;
 
     @BeforeEach
     void setUp() {
@@ -68,8 +54,8 @@ class SchedulerTest {
         user2 = new User("W0000001", new Date());
         user3 = new User("W0000002", new Date());
         rotationService = new MockRotationService(List.of(user1, user2, user3));
-        client = Mockito.mock(Client.class);
-        scheduler = new Scheduler(rotationService, client);
+        client = mock(Client.class);
+        notificationScheduler = new NotificationScheduler(rotationService, client);
     }
 
     @Test
@@ -78,22 +64,30 @@ class SchedulerTest {
         profile.setReal_name("John Doe");
         UserProfileResponse response = new UserProfileResponse();
         response.setProfile(profile);
-        Mockito.when(client.getUserProfile(user1.getIdentity())).thenReturn(new HttpEntity<>(response));
+        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(new HttpEntity<>(response));
         assertEquals(user1, rotationService.getHeadOfRotation());
         assertEquals(user2, rotationService.getNextInRotation());
 
-        scheduler.rotateAndNotify();
+        notificationScheduler.rotateAndNotify();
 
-        assertEquals(user3, rotationService.getHeadOfRotation());
-        assertEquals(user1, rotationService.getNextInRotation());
+        assertEquals(user2, rotationService.getHeadOfRotation());
+        assertEquals(user3, rotationService.getNextInRotation());
     }
 
     @Test
     void notifiesUsers() {
-        String notification = "Test notification";
+        String name = "John Doe";
+        UserProfile profile = new UserProfile();
+        profile.setReal_name(name);
+        UserProfileResponse userProfileResponse = new UserProfileResponse();
+        userProfileResponse.setProfile(profile);
+        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(new HttpEntity<>(userProfileResponse));
+        String notification = "This week's lunch captain is " + name;
+        String responseBody = "OK";
+        when(client.notifyUsers(notification)).thenReturn(new HttpEntity<>(responseBody));
 
-        scheduler.rotateAndNotify();
+        HttpEntity notificationResponse =  notificationScheduler.rotateAndNotify();
 
-        String expected = "This week's lunch captain is: ";
+        assertEquals(responseBody, notificationResponse.getBody());
     }
 }

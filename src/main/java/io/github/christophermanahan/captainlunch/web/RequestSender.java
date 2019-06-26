@@ -19,7 +19,7 @@ public class RequestSender implements Sender {
         this.restTemplate = restTemplate;
     }
 
-    public HttpEntity<String> post(URI location, HttpEntity request) {
+    public HttpEntity post(URI location, HttpEntity request) {
         return restTemplate.postForEntity(location, request, String.class);
     }
 

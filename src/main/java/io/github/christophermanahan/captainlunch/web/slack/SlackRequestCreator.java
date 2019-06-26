@@ -1,6 +1,6 @@
 package io.github.christophermanahan.captainlunch.web.slack;
 
-import io.github.christophermanahan.captainlunch.web.Request;
+import io.github.christophermanahan.captainlunch.web.RequestCreator;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 @Component
-public class SlackRequest implements Request {
+public class SlackRequestCreator implements RequestCreator {
 
     public HttpEntity<SlackMessage> createJsonPostRequest(String authToken, String body) {
         HttpHeaders headers = getHttpHeaders(authToken, MediaType.APPLICATION_JSON_VALUE);

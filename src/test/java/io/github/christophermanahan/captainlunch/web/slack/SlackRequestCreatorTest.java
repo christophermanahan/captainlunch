@@ -1,6 +1,6 @@
 package io.github.christophermanahan.captainlunch.web.slack;
 
-import io.github.christophermanahan.captainlunch.web.Request;
+import io.github.christophermanahan.captainlunch.web.RequestCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,13 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-class SlackRequestTest {
+class SlackRequestCreatorTest {
 
-    private Request slackRequest;
+    private RequestCreator slackRequestCreator;
 
     @BeforeEach
     void setUp() {
-        slackRequest = new SlackRequest();
+        slackRequestCreator = new SlackRequestCreator();
     }
 
     @Test
@@ -24,7 +24,7 @@ class SlackRequestTest {
         String authToken = "xoxp-test-auth-token";
         String body = "Test request body";
 
-        HttpEntity<SlackMessage> request = slackRequest.createJsonPostRequest(authToken, body);
+        HttpEntity<SlackMessage> request = slackRequestCreator.createJsonPostRequest(authToken, body);
 
 
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE, request.getHeaders().getContentType().toString());
@@ -39,7 +39,7 @@ class SlackRequestTest {
         MultiValueMap body = new LinkedMultiValueMap<String, String>();
         body.add("user", user);
 
-        HttpEntity request = slackRequest.createUrlEncodedPostRequest(authToken, body);
+        HttpEntity request = slackRequestCreator.createUrlEncodedPostRequest(authToken, body);
 
 
         Assertions.assertEquals(MediaType.APPLICATION_FORM_URLENCODED_VALUE, request.getHeaders().getContentType().toString());

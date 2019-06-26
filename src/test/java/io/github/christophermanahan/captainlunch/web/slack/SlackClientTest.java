@@ -2,7 +2,7 @@ package io.github.christophermanahan.captainlunch.web.slack;
 
 import io.github.christophermanahan.captainlunch.configuration.OutgoingRequestConfiguration;
 import io.github.christophermanahan.captainlunch.web.Client;
-import io.github.christophermanahan.captainlunch.web.Request;
+import io.github.christophermanahan.captainlunch.web.RequestCreator;
 import io.github.christophermanahan.captainlunch.web.Sender;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,16 +19,16 @@ import static org.mockito.Mockito.when;
 class SlackClientTest {
 
     private Sender sender;
-    private Request request;
+    private RequestCreator requestCreator;
     private OutgoingRequestConfiguration configuration;
     private Client client;
 
     @BeforeEach
     void setUp() {
         sender = mock(Sender.class);
-        request = mock(Request.class);
+        requestCreator = mock(RequestCreator.class);
         configuration = mock(OutgoingRequestConfiguration.class);
-        client = new SlackClient(sender, request, configuration);
+        client = new SlackClient(sender, requestCreator, configuration);
     }
 
     @Test
@@ -40,7 +40,7 @@ class SlackClientTest {
         HttpEntity slackResponse = new HttpEntity<>(new SlackMessage(notification));
         when(configuration.getNotifyUsersURI()).thenReturn(uri);
         when(configuration.getAuthToken()).thenReturn(authToken);
-        when(request.createJsonPostRequest(authToken, notification)).thenReturn(slackRequest);
+        when(requestCreator.createJsonPostRequest(authToken, notification)).thenReturn(slackRequest);
         when(sender.post(URI.create(uri), slackRequest)).thenReturn(slackResponse);
 
         HttpEntity response = client.notifyUsers(notification);
@@ -59,7 +59,7 @@ class SlackClientTest {
         HttpEntity<UserProfileResponse> response = new HttpEntity<>(new UserProfileResponse());
         when(configuration.getNotifyUsersURI()).thenReturn(uri);
         when(configuration.getAuthToken()).thenReturn(authToken);
-        when(request.createUrlEncodedPostRequest(authToken, body)).thenReturn(slackRequest);
+        when(requestCreator.createUrlEncodedPostRequest(authToken, body)).thenReturn(slackRequest);
         when(sender.postForUser(URI.create(uri), slackRequest)).thenReturn(response);
 
         HttpEntity<UserProfileResponse> userProfile = client.getUserProfile(userId);

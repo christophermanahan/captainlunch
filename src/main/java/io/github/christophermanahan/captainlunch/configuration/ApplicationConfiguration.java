@@ -1,35 +1,16 @@
 package io.github.christophermanahan.captainlunch.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
-@ConfigurationProperties(prefix = "app")
-public class ApplicationConfiguration implements SigningSecretConfiguration, OutgoingRequestConfiguration {
-
-    private String incomingRequestSigningSecret;
-    private String authToken;
-    private String notifyUsersURI;
-
-    public String getIncomingRequestSigningSecret() {
-        return incomingRequestSigningSecret;
-    }
-
-    public void setIncomingRequestSigningSecret(String incomingRequestSigningSecret) {
-        this.incomingRequestSigningSecret = incomingRequestSigningSecret;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
-    }
-
-    public String getNotifyUsersURI() {
-        return notifyUsersURI;
-    }
-
-    public void setNotifyUsersURI(String notifyUsersURI) {
-        this.notifyUsersURI = notifyUsersURI;
+@EnableScheduling
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
     }
 }
