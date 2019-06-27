@@ -1,6 +1,6 @@
 package io.github.christophermanahan.captainlunch.schedule;
 
-import io.github.christophermanahan.captainlunch.service.AutomatedRotationService;
+import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.web.Client;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationScheduler {
 
-    private AutomatedRotationService rotationService;
+    private RotationService rotationService;
     private Client client;
 
     @Autowired
-    public NotificationScheduler(AutomatedRotationService rotationService, Client client) {
+    public NotificationScheduler(RotationService rotationService, Client client) {
         this.rotationService = rotationService;
         this.client = client;
     }

@@ -14,10 +14,10 @@ public class User {
     @Column(name="identity", nullable = false, unique = true)
     private String identity;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
     public User() {}
