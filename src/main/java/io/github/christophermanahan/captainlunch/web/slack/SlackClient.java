@@ -12,6 +12,8 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 
+import static java.util.Objects.requireNonNull;
+
 @Component
 public class SlackClient implements Client {
 
@@ -32,10 +34,11 @@ public class SlackClient implements Client {
         return sender.post(location, slackRequest);
     }
 
-    public HttpEntity<UserProfileResponse> getUserProfile(String userId) {
+    public UserProfile getUserProfile(String userId) {
         URI location = URI.create("https://slack.com/api/users.profile.get");
-        HttpEntity<MultiValueMap<String, String>> slackRequest = requestCreator.createUrlEncodedPostRequest(configuration.getAuthToken(), getUrlEncodedBody(userId));
-        return sender.postForUser(location, slackRequest);
+        HttpEntity<MultiValueMap<String, String>> slackRequest =
+                requestCreator.createUrlEncodedPostRequest(configuration.getAuthToken(), getUrlEncodedBody(userId));
+        return requireNonNull(sender.postForUser(location, slackRequest).getBody()).getProfile();
     }
 
     private MultiValueMap<String, String> getUrlEncodedBody(String userId) {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class CaptainRotationService implements UserRotationService {
+public class CaptainRotationService implements RotationService {
 
     private UserRepository userRepository;
     private Time time;
@@ -30,7 +30,23 @@ public class CaptainRotationService implements UserRotationService {
 
     public void rotate() {
         Date currentTime = time.now();
-        getHeadOfRotation().setEndDate(currentTime);
-        getNextInRotation().setStartDate(currentTime);
+        moveToEnd(getHeadOfRotation(), currentTime);
+        moveToHead(getNextInRotation(), currentTime);
+    }
+
+    public void rotateIntoHead(String identity) {
+        Date currentTime = time.now();
+        User newHeadOfRotation = userRepository.findFirstByIdentity(identity);
+        moveToHead(newHeadOfRotation, currentTime);
+    }
+
+    private void moveToEnd(User user, Date currentTime) {
+        user.setEndDate(currentTime);
+        userRepository.save(user);
+    }
+
+    private void moveToHead(User user, Date currentTime) {
+        user.setStartDate(currentTime);
+        userRepository.save(user);
     }
 }

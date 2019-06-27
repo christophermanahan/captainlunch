@@ -1,10 +1,9 @@
 package io.github.christophermanahan.captainlunch.schedule;
 
 import io.github.christophermanahan.captainlunch.model.User;
-import io.github.christophermanahan.captainlunch.service.UserRotationService;
+import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.web.Client;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfile;
-import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 class NotificationSchedulerTest {
 
-    class MockRotationService implements UserRotationService {
+    class MockRotationService implements RotationService {
 
         private ArrayList<User> users;
 
@@ -39,12 +38,15 @@ class NotificationSchedulerTest {
         public void rotate() {
             Collections.rotate(users, -1);
         }
+
+        public void rotateIntoHead(String userIdentity) {}
+
     }
 
     private User user1;
     private User user2;
     private User user3;
-    private UserRotationService rotationService;
+    private RotationService rotationService;
     private Client client;
     private NotificationScheduler notificationScheduler;
 
@@ -62,9 +64,7 @@ class NotificationSchedulerTest {
     void rotatesUsers() {
         UserProfile profile = new UserProfile();
         profile.setReal_name("John Doe");
-        UserProfileResponse response = new UserProfileResponse();
-        response.setProfile(profile);
-        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(new HttpEntity<>(response));
+        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(profile);
         assertEquals(user1, rotationService.getHeadOfRotation());
         assertEquals(user2, rotationService.getNextInRotation());
 
@@ -79,9 +79,7 @@ class NotificationSchedulerTest {
         String name = "John Doe";
         UserProfile profile = new UserProfile();
         profile.setReal_name(name);
-        UserProfileResponse userProfileResponse = new UserProfileResponse();
-        userProfileResponse.setProfile(profile);
-        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(new HttpEntity<>(userProfileResponse));
+        when(client.getUserProfile(rotationService.getNextInRotation().getIdentity())).thenReturn(profile);
         String notification = "This week's lunch captain is " + name;
         String responseBody = "OK";
         when(client.notifyUsers(notification)).thenReturn(new HttpEntity<>(responseBody));

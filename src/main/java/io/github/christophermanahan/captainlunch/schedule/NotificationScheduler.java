@@ -1,8 +1,7 @@
 package io.github.christophermanahan.captainlunch.schedule;
 
-import io.github.christophermanahan.captainlunch.service.UserRotationService;
+import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.web.Client;
-import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationScheduler {
 
-    private UserRotationService rotationService;
+    private RotationService rotationService;
     private Client client;
 
     @Autowired
-    public NotificationScheduler(UserRotationService rotationService, Client client) {
+    public NotificationScheduler(RotationService rotationService, Client client) {
         this.rotationService = rotationService;
         this.client = client;
     }
@@ -23,8 +22,12 @@ public class NotificationScheduler {
     @Scheduled(cron = "${app.captainRotationNotificationSchedule}")
     public HttpEntity rotateAndNotify() {
         rotationService.rotate();
-        HttpEntity<UserProfileResponse> currentCaptain = client.getUserProfile(rotationService.getHeadOfRotation().getIdentity());
-        String notification = "This week's lunch captain is " + currentCaptain.getBody().getProfile().getReal_name();
+        String notification = "This week's lunch captain is " + getCurrentCaptainName();
         return client.notifyUsers(notification);
+    }
+
+    private String getCurrentCaptainName() {
+        String currentCaptainIdentity = rotationService.getHeadOfRotation().getIdentity();
+        return client.getUserProfile(currentCaptainIdentity).getReal_name();
     }
 }
