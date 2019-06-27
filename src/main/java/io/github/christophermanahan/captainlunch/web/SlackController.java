@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CaptainLunchController {
+public class SlackController {
 
     private CreateUserService userService;
     private ValidationService validationService;
@@ -23,7 +23,7 @@ public class CaptainLunchController {
     private Client client;
 
     @Autowired
-    public CaptainLunchController(CreateUserService userService, ValidationService validationService, RotationService rotationService, Client client) {
+    public SlackController(CreateUserService userService, ValidationService validationService, RotationService rotationService, Client client) {
         this.userService = userService;
         this.validationService = validationService;
         this.rotationService = rotationService;
