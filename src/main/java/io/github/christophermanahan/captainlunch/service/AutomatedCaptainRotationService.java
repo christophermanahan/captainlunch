@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class CaptainRotationService implements UserRotationService {
+public class AutomatedCaptainRotationService implements AutomatedRotationService {
 
     private UserRepository userRepository;
     private Time time;
 
     @Autowired
-    public CaptainRotationService(UserRepository userRepository, Time time) {
+    public AutomatedCaptainRotationService(UserRepository userRepository, Time time) {
         this.userRepository = userRepository;
         this.time = time;
     }

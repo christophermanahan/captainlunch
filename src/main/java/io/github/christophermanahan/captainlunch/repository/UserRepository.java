@@ -9,4 +9,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findFirstByOrderByStartDateDesc();
     User findFirstByOrderByEndDate();
+    User findFirstByIdentity(String identity);
 }

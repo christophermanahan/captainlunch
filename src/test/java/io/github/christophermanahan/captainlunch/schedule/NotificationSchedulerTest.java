@@ -1,7 +1,7 @@
 package io.github.christophermanahan.captainlunch.schedule;
 
 import io.github.christophermanahan.captainlunch.model.User;
-import io.github.christophermanahan.captainlunch.service.UserRotationService;
+import io.github.christophermanahan.captainlunch.service.AutomatedRotationService;
 import io.github.christophermanahan.captainlunch.web.Client;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfile;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
@@ -20,11 +20,11 @@ import static org.mockito.Mockito.when;
 
 class NotificationSchedulerTest {
 
-    class MockRotationService implements UserRotationService {
+    class MockRotationServiceAutomated implements AutomatedRotationService {
 
         private ArrayList<User> users;
 
-        MockRotationService(List<User> users) {
+        MockRotationServiceAutomated(List<User> users) {
             this.users = new ArrayList<>(users);
         }
 
@@ -44,7 +44,7 @@ class NotificationSchedulerTest {
     private User user1;
     private User user2;
     private User user3;
-    private UserRotationService rotationService;
+    private AutomatedRotationService rotationService;
     private Client client;
     private NotificationScheduler notificationScheduler;
 
@@ -53,7 +53,7 @@ class NotificationSchedulerTest {
         user1 = new User("W0000000", new Date());
         user2 = new User("W0000001", new Date());
         user3 = new User("W0000002", new Date());
-        rotationService = new MockRotationService(List.of(user1, user2, user3));
+        rotationService = new MockRotationServiceAutomated(List.of(user1, user2, user3));
         client = mock(Client.class);
         notificationScheduler = new NotificationScheduler(rotationService, client);
     }

@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class CaptainRotationServiceTest {
+class AutomatedCaptainRotationServiceTest {
 
     private UserRepository userRepository;
     private Time time;
-    private UserRotationService rotationService;
+    private AutomatedCaptainRotationService rotationService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         time = mock(Time.class);
-        rotationService = new CaptainRotationService(userRepository, time);
+        rotationService = new AutomatedCaptainRotationService(userRepository, time);
     }
 
     @Test
@@ -46,7 +46,7 @@ class CaptainRotationServiceTest {
     }
 
     @Test
-    void rotatesCurrentCaptainToLastPositionAndNextCaptainToCurrentPosition() {
+    void endsCurrentCaptainsRotationAndStartsNextCaptainsRotation() {
         Date twoSecondsAgo = new Date(Long.valueOf("0"));
         Date oneSecondAgo = new Date(Long.valueOf("1"));
         Date currentTime = new Date(Long.valueOf("2"));
