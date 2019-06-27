@@ -2,7 +2,6 @@ package io.github.christophermanahan.captainlunch.schedule;
 
 import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.web.Client;
-import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,8 +22,12 @@ public class NotificationScheduler {
     @Scheduled(cron = "${app.captainRotationNotificationSchedule}")
     public HttpEntity rotateAndNotify() {
         rotationService.rotate();
-        HttpEntity<UserProfileResponse> currentCaptain = client.getUserProfile(rotationService.getHeadOfRotation().getIdentity());
-        String notification = "This week's lunch captain is " + currentCaptain.getBody().getProfile().getReal_name();
+        String notification = "This week's lunch captain is " + getCurrentCaptainName();
         return client.notifyUsers(notification);
+    }
+
+    private String getCurrentCaptainName() {
+        String currentCaptainIdentity = rotationService.getHeadOfRotation().getIdentity();
+        return client.getUserProfile(currentCaptainIdentity).getReal_name();
     }
 }

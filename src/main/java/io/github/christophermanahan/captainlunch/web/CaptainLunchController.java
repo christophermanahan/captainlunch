@@ -3,7 +3,6 @@ package io.github.christophermanahan.captainlunch.web;
 import io.github.christophermanahan.captainlunch.service.CreateUserService;
 import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.service.ValidationService;
-import io.github.christophermanahan.captainlunch.web.slack.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
@@ -37,12 +36,16 @@ public class CaptainLunchController {
             @RequestParam("user_id") String userId) {
         if (validationService.validateRequest(request)) {
             rotationService.rotateIntoHead(userId);
-            UserProfile profile = client.getUserProfile(userId).getBody().getProfile();
-            client.notifyUsers(profile.getReal_name() + " overrode the rotation and is your new lunch captain!");
-            return ResponseEntity.status(HttpStatus.OK).build();
+            String displayName = client.getUserProfile(userId).getReal_name();
+            client.notifyUsers(displayName + " overrode the rotation and is your new lunch captain!");
+            return okResponse();
         } else {
             return unauthorizedResponse();
         }
+    }
+
+    private ResponseEntity<Object> okResponse() {
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/join")
@@ -51,8 +54,8 @@ public class CaptainLunchController {
             @RequestParam("user_id") String userId) {
         if (validationService.validateRequest(request)) {
             userService.createUser(userId);
-            UserProfile profile = client.getUserProfile(userId).getBody().getProfile();
-            return createdResponse(profile.getReal_name());
+            String displayName = client.getUserProfile(userId).getReal_name();
+            return createdResponse(displayName);
         } else {
             return unauthorizedResponse();
         }
@@ -75,6 +78,6 @@ public class CaptainLunchController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(String.format("Ahoy Captain %s! You have joined the lunch rotation.", displayName));
+                .body("Ahoy Captain" + displayName + "! You have joined the lunch rotation.");
     }
 }

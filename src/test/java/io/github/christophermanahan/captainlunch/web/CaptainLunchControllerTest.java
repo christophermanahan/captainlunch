@@ -5,7 +5,6 @@ import io.github.christophermanahan.captainlunch.service.CreateUserService;
 import io.github.christophermanahan.captainlunch.service.RotationService;
 import io.github.christophermanahan.captainlunch.service.ValidationService;
 import io.github.christophermanahan.captainlunch.web.slack.UserProfile;
-import io.github.christophermanahan.captainlunch.web.slack.UserProfileResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,11 +47,9 @@ class CaptainLunchControllerTest {
         String displayName = "John Doe";
         UserProfile profile = new UserProfile();
         profile.setReal_name(displayName);
-        UserProfileResponse response = new UserProfileResponse();
-        response.setProfile(profile);
         when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
         when(userService.createUser(identity)).thenReturn(new User(identity, new Date(Long.valueOf("0"))));
-        when(client.getUserProfile(identity)).thenReturn(new HttpEntity<>(response));
+        when(client.getUserProfile(identity)).thenReturn(profile);
 
         mvc.perform(post("/join")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -92,10 +89,8 @@ class CaptainLunchControllerTest {
         String displayName = "John Doe";
         UserProfile profile = new UserProfile();
         profile.setReal_name(displayName);
-        UserProfileResponse response = new UserProfileResponse();
-        response.setProfile(profile);
         when(validationService.validateRequest(any(HttpEntity.class))).thenReturn(true);
-        when(client.getUserProfile(identity)).thenReturn(new HttpEntity<>(response));
+        when(client.getUserProfile(identity)).thenReturn(profile);
 
         mvc.perform(post("/override")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

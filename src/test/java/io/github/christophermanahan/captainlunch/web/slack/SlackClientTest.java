@@ -49,21 +49,27 @@ class SlackClientTest {
     }
 
     @Test
-    void itSendsAProfileRequestToTheConfiguredLocation() {
+    void itGetsAUserProfile() {
+        String userId = "W000000";
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("user", userId);
+        HttpEntity<MultiValueMap<String, String>> slackRequest = new HttpEntity<>(body);
+
+        String displayName = "John Doe";
+        UserProfile profile = new UserProfile();
+        profile.setReal_name(displayName);
+        UserProfileResponse response = new UserProfileResponse();
+        response.setProfile(profile);
+
         String uri = "https://slack.com/api/users.profile.get";
         String authToken = "xoxp-test-auth-token";
-        String userId = "W000000";
-        MultiValueMap body = new LinkedMultiValueMap<String, String>();
-        body.add("user", userId);
-        HttpEntity slackRequest = new HttpEntity<>(body);
-        HttpEntity<UserProfileResponse> response = new HttpEntity<>(new UserProfileResponse());
         when(configuration.getNotifyUsersURI()).thenReturn(uri);
         when(configuration.getAuthToken()).thenReturn(authToken);
         when(requestCreator.createUrlEncodedPostRequest(authToken, body)).thenReturn(slackRequest);
-        when(sender.postForUser(URI.create(uri), slackRequest)).thenReturn(response);
+        when(sender.postForUser(URI.create(uri), slackRequest)).thenReturn(new HttpEntity<>(response));
 
-        HttpEntity<UserProfileResponse> userProfile = client.getUserProfile(userId);
+        UserProfile userProfile = client.getUserProfile(userId);
 
-        Assertions.assertEquals(response, userProfile);
+        Assertions.assertEquals(displayName, userProfile.getReal_name());
     }
 }
