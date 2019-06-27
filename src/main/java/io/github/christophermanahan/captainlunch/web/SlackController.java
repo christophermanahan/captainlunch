@@ -23,7 +23,11 @@ public class SlackController {
     private Client client;
 
     @Autowired
-    public SlackController(CreateUserService userService, ValidationService validationService, RotationService rotationService, Client client) {
+    public SlackController(
+            CreateUserService userService,
+            ValidationService validationService,
+            RotationService rotationService,
+            Client client) {
         this.userService = userService;
         this.validationService = validationService;
         this.rotationService = rotationService;
