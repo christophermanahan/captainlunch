@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SlackSigningSecretValidationServiceTest {
+class SlackValidationServiceTest {
 
     private SigningSecretConfiguration configuration;
     private ValidationService validationService;
@@ -23,7 +23,7 @@ class SlackSigningSecretValidationServiceTest {
     @BeforeEach
     void setUp() {
         configuration = mock(SigningSecretConfiguration.class);
-        validationService = new SlackSigningSecretValidationService(configuration);
+        validationService = new SlackValidationService(configuration);
     }
 
     @Test
