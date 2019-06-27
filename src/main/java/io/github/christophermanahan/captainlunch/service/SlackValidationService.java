@@ -12,12 +12,12 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-public class SlackSigningSecretValidationService implements ValidationService {
+public class SlackValidationService implements ValidationService {
 
     private SigningSecretConfiguration configuration;
 
     @Autowired
-    SlackSigningSecretValidationService(SigningSecretConfiguration configuration) {
+    SlackValidationService(SigningSecretConfiguration configuration) {
         this.configuration = configuration;
     }
 
